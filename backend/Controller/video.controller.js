@@ -23,7 +23,6 @@ export async function uploadVideo(req, res) {
 
   const { originalname, size } = file;
   const filePath = file.path;
- 
 
   try {
     const originalUploadParams = {
@@ -32,24 +31,22 @@ export async function uploadVideo(req, res) {
       Body: fs.createReadStream(filePath),
     };
     const originalUpload = await s3.upload(originalUploadParams).promise();
-    const passThrough = new PassThrough();
-    
+
     await new Promise((resolve, reject) => {
       ffmpeg(filePath)
-        .output(passThrough)
+        .output(compressedPath)
         .size("70%")
         .on("end", resolve)
         .on("error", reject)
         .run();
     });
-
     const compressedUploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `compressed/compressed-${originalname}`,
-      Body: passThrough,
+      Body: fs.createReadStream(compressedPath),
     };
     const compressedUpload = await s3.upload(compressedUploadParams).promise();
-  const result = await compressedUpload;
+
     const videoData = new videos({
       fileName: originalname,
       originalSize: size,
@@ -57,7 +54,7 @@ export async function uploadVideo(req, res) {
       compressionStatus: "Completed",
       downloadLinks: {
         original: originalUpload.Location,
-        compressed: result.Location,
+        compressed: compressedUpload.Location,
       },
     });
 
