@@ -11,7 +11,9 @@ const VideoDownload = () => {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/video/${id}`);
+        const response = await axios.get(
+          `https://compress-app-backend.onrender.com/video/${id}`
+        );
         setVideo(response.data);
       } catch (err) {
         setError("Failed to fetch video. Please try again.");

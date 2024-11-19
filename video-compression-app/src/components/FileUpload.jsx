@@ -27,7 +27,7 @@ const FileUpload = () => {
       setUploading(true);
       setMessage(""); // Clear previous messages
       const response = await axios.post(
-        "http://localhost:3000/videos/upload",
+        "https://compress-app-backend.onrender.com/videos/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
