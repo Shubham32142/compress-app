@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"), // Folder for temporary storage
+  destination: (req, file, cb) => cb(null, uploadDir), // Folder for temporary storage
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
 
