@@ -23,7 +23,6 @@ export async function uploadVideo(req, res) {
 
   const { originalname, size } = file;
   const filePath = file.path;
-  const compressedPath = `uploads/compressed-${originalname}`;
 
   try {
     const originalUploadParams = {
@@ -41,7 +40,6 @@ export async function uploadVideo(req, res) {
         .on("error", reject)
         .run();
     });
-
     const compressedUploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `compressed/compressed-${originalname}`,
