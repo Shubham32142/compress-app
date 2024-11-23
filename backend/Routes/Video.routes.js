@@ -8,25 +8,32 @@ import {
   videoById,
 } from "../Controller/video.controller.js";
 import fs from "fs";
-import path from "path";
+
+// Get the directory name of the current file for file paths
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+// Set up multer to store uploaded files in memory
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 }, // Limit to 100MB
 });
 
-const upload = multer({ storage });
-
+// Define Routes
 export function Routes(server) {
-  // Video upload route
+  // POST /videos/upload - Upload video
   server.post("/videos/upload", upload.single("video"), uploadVideo);
+
+  // GET /videos/:id/download - Get download links for video
   server.get("/videos/:id/download", download);
+
+  // GET /video/:id - Get video metadata by ID
   server.get("/video/:id", videoById);
+
+  // Error handling middleware
+  server.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  });
 }
