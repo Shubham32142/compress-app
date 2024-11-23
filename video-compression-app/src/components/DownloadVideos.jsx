@@ -12,7 +12,7 @@ const VideoDownload = () => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
-          `https://compress-app-backend.onrender.com/video/${id}`
+          `https://compress-backend2.onrender.com/video/${id}`
         );
         setVideo(response.data);
       } catch (err) {
